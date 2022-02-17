@@ -3,6 +3,10 @@
 A simple Python package which lets you programmatically run a few proteomics search engines (Comet, X! Tandem, MS-GF+) 
 and use compiled Trans-Proteomic Pipeline (TPP) binaries without installing the entire pipeline.
 
+Note that this does not run the entire TPP. For example, you don't get to use the fancy GUI or anything. It is 
+simply a way to run compiled TPP tools such as PeptideProphet, InterParserProphet, idconvert, etc without needing to 
+compile the entire pipeline on your computer.
+
 TPP tools are run from a Singularity image (so an installation of Singularity is required).
 
 ## Requirements
@@ -44,6 +48,8 @@ take that long unless your internet connection is visiting from 1998.
 Now that things are ready to go, you can...
 
 ### search!
+It is assumed that you have some understanding of the search engines and can set up the appropriate parameters files 
+by yourself.
 ```python
 import proteotools.search as search
 from pathlib import Path
@@ -72,6 +78,8 @@ search.msgfplus(parameter_file=msgf_params,
 ```
 
 ### validate!
+`tpp.run_prophets` runs InteractParser to fix common pepXML problems, PeptideProphetParser and InterProphetParser. 
+There are a few parameters hardcoded in there, so if you want more control see the following section.
 ```python
 import proteotools.tpp as tpp
 
@@ -91,10 +99,9 @@ tpp.run_prophets(pepxml_files=pepxml_files,
                  max_peptide_rank=1  # the max peptide rank to leave in there, if the search engine report, e.g. the top 5 hits
                  )
 ```
-`tpp.run_prophets` runs InteractParser to fix common pepXML problems, PeptideProphet and iProphet. There are a few 
-parameters hardcoded in there, so if you want more control see the following.
 
 ### run any TPP binary!
+This is a simple example of running `Tandem2XML`. But you should be able to run any of the compiled TPP binaries.
 ```python
 tpp.run_tool(tool='Tandem2XML',  # because as much as we should be using mzid files instead of pepXML, i would say pepXML are preferable to tandem XML files.
              command='/path/to/my/results/search_results.t.xml /path/to/my/results/desired_pepXML_search_results.pepXML',
