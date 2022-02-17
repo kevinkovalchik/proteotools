@@ -5,7 +5,7 @@ import os
 from proteotools import TOOL_DIR, COMET, TANDEM, MSGF
 
 
-def download_tools():
+def download_search_engines():
 
     if not TOOL_DIR.exists():
         TOOL_DIR.mkdir()
@@ -54,19 +54,19 @@ def check_for_singularity():
 
 def check_for_comet():
     if not Path(COMET).exists():
-        raise EnvironmentError('Comet not found. If you have not, run "proteotools.software.download_tools(). '
+        raise EnvironmentError('Comet not found. If you have not, run "proteotools.software.download_search_engines(). '
                                'Otherwise, check the above output for more information.')
 
 
 def check_for_tandem():
     if not Path(TANDEM).exists():
-        raise EnvironmentError('X! Tandem not found. If you have not, run "proteotools.software.download_tools(). '
+        raise EnvironmentError('X! Tandem not found. If you have not, run "proteotools.software.download_search_engines(). '
                                'Otherwise, check the above output for more information.')
 
 
 def check_for_msgfplus():
     if not Path(MSGF).exists():
-        raise EnvironmentError('MS-GF+ not found. If you have not, run "proteotools.software.download_tools(). '
+        raise EnvironmentError('MS-GF+ not found. If you have not, run "proteotools.software.download_search_engines(). '
                                'Otherwise, check the above output for more information.')
 
 
@@ -87,3 +87,8 @@ def get_tpp():
 
     if p.returncode != 0:
         raise OSError('There was a problem pulling the TPP Singularity image. Please see the above output.')
+
+
+def download_all():
+    download_search_engines()
+    get_tpp()

@@ -6,6 +6,18 @@ from os import PathLike
 from pathlib import Path
 
 
+def tool_help(tool: str):
+    check_for_singularity()
+
+    singularity_command = ['singularity', 'exec', '-B', str(TPP), tool]
+
+    p = Popen(singularity_command)
+    _ = p.communicate()
+
+    if p.returncode != 0:
+        raise SubprocessError(f'There was an error running {tool}. See the above output.')
+
+
 def run_tool(tool: str, command: Union[str, List[str]], path_to_bind: Union[str, PathLike] = '~/'):
     check_for_singularity()
 
