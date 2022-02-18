@@ -9,7 +9,7 @@ from pathlib import Path
 def tool_help(tool: str):
     check_for_singularity()
 
-    singularity_command = ['singularity', 'exec', '-B', str(TPP), tool]
+    singularity_command = ['singularity', 'exec', str(TPP), tool]
 
     p = Popen(singularity_command)
     _ = p.communicate()
