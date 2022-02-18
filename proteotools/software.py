@@ -2,7 +2,7 @@ from pathlib import Path
 from subprocess import Popen, PIPE
 from zipfile import ZipFile
 import os
-from proteotools import TOOL_DIR, COMET, TANDEM, MSGF
+from proteotools import TOOL_DIR, COMET, TANDEM, MSGF, THERMORAWFILEPARSER
 
 
 def download_search_engines():
@@ -41,6 +41,46 @@ def download_search_engines():
         elif 'MSGFPlus' in name:
             zipfile = ZipFile(downloads / name)
             zipfile.extractall(path=TOOL_DIR / 'msgfplus')
+
+
+def check_for_thermorawfileparser():
+    command = 'mono --version'.split()
+    p = Popen(command, stdout=PIPE)
+    _ = p.communicate()
+
+    if p.returncode != 0:
+        raise OSError('Mono does not appear to be installed. Mono is required for running ThermoRawFileParser.')
+
+    command = f'mono {THERMORAWFILEPARSER} --version'.split()
+    p = Popen(command, stdout=PIPE)
+    _ = p.communicate()
+
+    if p.returncode != 0:
+        raise OSError('ThermoRawFileParser does not appear to be installed. It is required to convert Thermo '
+                      'raw files.')
+
+
+def download_thermorawfileparser():
+    url = 'https://github.com/compomics/ThermoRawFileParser/releases/download/v1.3.4/ThermoRawFileParser.zip'
+
+    if not TOOL_DIR.exists():
+        TOOL_DIR.mkdir()
+
+    downloads = TOOL_DIR / 'downloads'
+
+    if not downloads.exists():
+        downloads.mkdir()
+
+    name = Path(url).name
+
+    command = f'wget -O {downloads / name} {url}'.split()
+    p = Popen(command)
+    _ = p.communicate()
+    if p.returncode != 0:
+        raise ConnectionError(f"There was a problem downloading {url}. Check the above output.")
+
+    zipfile = ZipFile(downloads / name)
+    zipfile.extractall(path=TOOL_DIR / 'ThermoRawFileParser')
 
 
 def check_for_singularity():
@@ -92,3 +132,10 @@ def get_tpp():
 def download_all():
     download_search_engines()
     get_tpp()
+    download_thermorawfileparser()
+
+    check_for_thermorawfileparser()
+    check_for_msgfplus()
+    check_for_tandem()
+    check_for_comet()
+    check_for_singularity()
