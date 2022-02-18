@@ -3,10 +3,13 @@ from pathlib import Path
 from subprocess import Popen, SubprocessError
 from proteotools.software import check_for_tandem, check_for_comet, check_for_msgfplus
 import proteotools.tpp as tpp
+from typing import List
 
 
-def comet(parameter_file, fasta, *mzml_files):
+def comet(parameter_file, fasta, *mzml_files) -> List[str]:
     check_for_comet()
+    pepxml_results = []
+
     for mzml in mzml_files:
         name = Path(mzml).stem
         name = Path(mzml).parent / (name + '-comet')
@@ -18,11 +21,15 @@ def comet(parameter_file, fasta, *mzml_files):
             raise SubprocessError('Something went wrong while running Comet. Inspect the above output.')
 
         Path(f'{name}.pep.xml').rename(name.parent / f'{name}.pepXML')
+        pepxml_results.append(str(mzml).replace('.mzML', '-comet.pepXML'))
+
+    return pepxml_results
 
 
 def msgfplus(parameter_file, fasta, *mzml_files, decoy_prefix: str = 'rev_', convert_to_pepxml: bool = True,
-             memory: str = '8000M'):
+             memory: str = '8000M') -> List[str]:
     check_for_msgfplus()
+    pepxml_results = []
     for mzml in mzml_files:
         name = Path(mzml).stem
         mzid = Path(mzml).parent / (name + '-msgf_plus.mzid')
@@ -41,9 +48,11 @@ def msgfplus(parameter_file, fasta, *mzml_files, decoy_prefix: str = 'rev_', con
             _ = p.communicate()
             if p.returncode != 0:
                 raise SubprocessError('Something went wrong while running idconvert. Inspect the above output.')
+            pepxml_results.append(str(mzml).replace('.mzML', '-msgf_plus.pepXML'))
+    return pepxml_results
 
 
-def tandem(parameter_file, fasta, *mzml_files):
+def tandem(parameter_file, fasta, *mzml_files) -> List[str]:
     check_for_tandem()
     output_dir = Path(mzml_files[0]).expanduser().parent
     # we don't convert the tandem xml files to pepxml here. the output doesn't seem to be compatible with TPP tools
@@ -53,7 +62,7 @@ def tandem(parameter_file, fasta, *mzml_files):
     _ = p.communicate()
     if p.returncode != 0:
         raise SubprocessError('Something went wrong while running X! Tandem. Inspect the above output.')
-
+    pepxml_results = []
     # convert to pepXML
     for mzml in mzml_files:
         txml = Path(str(mzml).replace('.mzML', '.t.xml'))
@@ -62,17 +71,5 @@ def tandem(parameter_file, fasta, *mzml_files):
         tpp.run_tool('Tandem2XML',
                      f'{txml} {t_pepxml}',
                      path_to_bind=bind_point)
-
-
-        '''new_pepxml = pepxml.parent / pepxml.name.replace('.pep.xml', '-tandem.pepXML')
-        pepxml.rename(new_pepxml)
-
-        # fix the basename tags - they have a .t.xml extension, but should have no extension
-        t_xml = Path(str(mzml).replace('.mzML', '.t.xml'))
-        incorrect_basename = f'base_name="{t_xml}"'
-        correct_basename = f'base_name="{str(t_xml).replace(".t.xml", "")}"'
-        with open(new_pepxml, 'r') as f:
-            contents = f.read()
-        contents = contents.replace(incorrect_basename, correct_basename)
-        with open(new_pepxml, 'w') as f:
-            f.write(contents)'''
+        pepxml_results.append(t_pepxml)
+    return pepxml_results
