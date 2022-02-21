@@ -7,12 +7,13 @@ from subprocess import Popen, SubprocessError
 
 
 def run_thermorawfileparser(input: Union[str, PathLike, List[Union[str, PathLike]]],
-                            output_directory: Union[str, PathLike],
+                            output_directory: Union[str, PathLike] = None,
                             format: Literal['mgf', 'mzml', 'indexed_mzml', 'parquet'] = 'indexed_mzml',
                             metadata_output_file: Union[str, PathLike] = None,
                             gzip_output: bool = False,
                             no_peak_picking: bool = False,
-                            no_zlib_compression: bool = False) -> List[str]:
+                            no_zlib_compression: bool = False,
+                            check_for_existing_mzml: bool = True) -> List[str]:
     check_for_thermorawfileparser()
     mzml_files: List[str] = []
     possible_formats = ['mgf', 'mzml', 'indexed_mzml', 'parquet']
@@ -30,6 +31,10 @@ def run_thermorawfileparser(input: Union[str, PathLike, List[Union[str, PathLike
             file_list = [i]
 
         for raw_file in file_list:
+            if check_for_existing_mzml:
+                if raw_file.with_suffix('.mzML').exists():
+                    mzml_files.append(str(raw_file.with_suffix('.mzML')))
+                    continue
             if output_directory is None:
                 out_dir = raw_file.parent
             else:
