@@ -1,7 +1,8 @@
 # proteotools
 
-A simple Python package which lets you programmatically run a few proteomics search engines (Comet, X! Tandem, MS-GF+) 
-and use compiled Trans-Proteomic Pipeline (TPP) binaries without installing the entire pipeline.
+A simple Python package which lets you programmatically convert Thermo raw files using ThermoRawFileParser, run a 
+few proteomics search engines (Comet, X! Tandem, MS-GF+), and use compiled Trans-Proteomic Pipeline (TPP) 
+binaries without needing to compile the entire pipeline on your computer.
 
 Note that this does not run the entire TPP. For example, you don't get to use the fancy GUI or anything. It is 
 simply a way to run compiled TPP tools such as PeptideProphet, InterParserProphet, idconvert, etc without needing to 
@@ -121,3 +122,8 @@ OPTIONS:
 	DESCOFF:	Don't Use Spectrum Descriptions for Naming Spectra in PepXML, (Default: parse scan number from the description)
 	INDEXOFFxx:	TPP assumes scans start at 1; older X!Tandem resultshad scan index starts at 0, add xx when converting to pepXML (Default: 0)
 ```
+
+## License information
+
+Proteotools is released under the MIT license. Be sure you are aware of the licenses used by the other software tools of
+which Proteotools makes use (ThermoRawFileParser, Comet, MS-GF+, X! Tandem, Trans-Proteomic Pipeline).
