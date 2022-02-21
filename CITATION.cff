@@ -1,0 +1,15 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Proteotools
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Kevin
+    family-names: Kovalchik
+    email: kevin.kovalchik@gmail.com
+    affiliation: 'CHU Sainte-Justine, Université de Montréal'
+    orcid: 'https://orcid.org/0000-0002-2541-7721'
