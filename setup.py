@@ -1,8 +1,9 @@
 from setuptools import setup
+from proteotools import __version__ as version
 
 setup(
     name='proteotools',
-    version='0.0.0',
+    version=version,
     packages=['proteotools'],
     url='https://github.com/kevinkovalchik/proteotools',
     license='MIT',

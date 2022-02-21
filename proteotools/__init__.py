@@ -1,5 +1,7 @@
 from pathlib import Path
 
+__version__ = '0.1.0'
+
 TOOL_DIR = Path('~/.proteotools_software').expanduser()
 COMET = TOOL_DIR / 'comet' / 'comet.linux.exe'
 MSGF = TOOL_DIR / 'msgfplus' / 'MSGFPlus.jar'
