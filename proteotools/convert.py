@@ -1,7 +1,7 @@
 from proteotools import THERMORAWFILEPARSER
 from proteotools.software import check_for_thermorawfileparser
 from typing import List, Union, Literal
-from os import  PathLike
+from os import PathLike
 from pathlib import Path
 from subprocess import Popen, SubprocessError
 
