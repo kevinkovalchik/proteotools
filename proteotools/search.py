@@ -79,7 +79,7 @@ def run_all_with_defaults(comet_parameters,
                           msgfplus_parameters,
                           tandem_parameters,
                           fasta,
-                          *mzml_files) -> List[str]:
+                          mzml_files) -> List[str]:
     pepxml_files = comet(parameter_file=comet_parameters,
                          fasta=fasta,
                          *mzml_files)
