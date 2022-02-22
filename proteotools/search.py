@@ -6,7 +6,7 @@ import proteotools.tpp as tpp
 from typing import List
 
 
-def comet(parameter_file, fasta, *mzml_files) -> List[str]:
+def comet(parameter_file, fasta, mzml_files) -> List[str]:
     check_for_comet()
     pepxml_results = []
 
@@ -26,7 +26,7 @@ def comet(parameter_file, fasta, *mzml_files) -> List[str]:
     return pepxml_results
 
 
-def msgfplus(parameter_file, fasta, *mzml_files, decoy_prefix: str = 'rev_', convert_to_pepxml: bool = True,
+def msgfplus(parameter_file, fasta, mzml_files, decoy_prefix: str = 'rev_', convert_to_pepxml: bool = True,
              memory: str = '2000M') -> List[str]:
     check_for_msgfplus()
     pepxml_results = []
@@ -52,7 +52,7 @@ def msgfplus(parameter_file, fasta, *mzml_files, decoy_prefix: str = 'rev_', con
     return pepxml_results
 
 
-def tandem(parameter_file, fasta, *mzml_files) -> List[str]:
+def tandem(parameter_file, fasta, mzml_files) -> List[str]:
     check_for_tandem()
     output_dir = Path(mzml_files[0]).expanduser().parent
     # we don't convert the tandem xml files to pepxml here. the output doesn't seem to be compatible with TPP tools
@@ -82,12 +82,12 @@ def run_all_with_defaults(comet_parameters,
                           mzml_files) -> List[str]:
     pepxml_files = comet(parameter_file=comet_parameters,
                          fasta=fasta,
-                         *mzml_files)
+                         mzml_files=mzml_files)
     pepxml_files += msgfplus(parameter_file=msgfplus_parameters,
                              fasta=fasta,
-                             *mzml_files)
+                             mzml_files=mzml_files)
     pepxml_files += tandem(parameter_file=tandem_parameters,
                            fasta=fasta,
-                           *mzml_files)
+                           mzml_files=mzml_files)
 
     return pepxml_files
