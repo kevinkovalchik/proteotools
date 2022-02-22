@@ -1,14 +1,15 @@
 # proteotools
 
 A simple Python package which lets you programmatically convert Thermo raw files using ThermoRawFileParser, run a 
-few proteomics search engines (Comet, X! Tandem, MS-GF+), and use compiled Trans-Proteomic Pipeline (TPP) 
-binaries without needing to compile the entire pipeline on your computer.
+few proteomics search engines (Comet, X! Tandem, MS-GF+), and use Trans-Proteomic Pipeline (TPP) 
+binaries without needing to compile them on your computer, all from within Python!
 
 Note that this does not run the entire TPP. For example, you don't get to use the fancy GUI or anything. It is 
-simply a way to run compiled TPP tools such as PeptideProphet, InterParserProphet, idconvert, etc without needing to 
+simply a way to run compiled TPP tools such as PeptideProphet, InterProphetParser, idconvert, etc without needing to 
 compile the entire pipeline on your computer.
 
-TPP tools are run from a Singularity image (so an installation of Singularity is required).
+TPP tools are run from a Singularity image, so an installation of Singularity is required. ThermoRawFileParser runs 
+in Linux using Mono, so you need that too.
 
 ## Requirements
 `proteotools` only runs in Linux. Mostly the reason for this (in fact, probably entirely) is thatI have not made it 
@@ -16,6 +17,8 @@ check the OS and select the appropriate downloads and binaries. I use Ubuntu and
 wishes to use it on another OS please raise an issue and I'll check it out.
 
 `proteotools` requires Singularity to be installed on the computer. See below.
+
+`ThermoRawFileParser` requires Mono.
 
 ## Installation
 
@@ -80,7 +83,7 @@ search.msgfplus(parameter_file=msgf_params,
 
 ### validate!
 `tpp.run_prophets` runs InteractParser to fix common pepXML problems, PeptideProphetParser and InterProphetParser. 
-There are a few parameters hardcoded in there, so if you want more control see the following section.
+There are a few parameters hardcoded in there, so if you want more control see the next section.
 ```python
 import proteotools.tpp as tpp
 
