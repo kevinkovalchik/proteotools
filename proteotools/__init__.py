@@ -1,6 +1,6 @@
 from pathlib import Path
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 TOOL_DIR = Path('~/.proteotools_software').expanduser()
 COMET = TOOL_DIR / 'comet' / 'comet.linux.exe'
