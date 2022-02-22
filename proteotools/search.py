@@ -27,7 +27,7 @@ def comet(parameter_file, fasta, *mzml_files) -> List[str]:
 
 
 def msgfplus(parameter_file, fasta, *mzml_files, decoy_prefix: str = 'rev_', convert_to_pepxml: bool = True,
-             memory: str = '8000M') -> List[str]:
+             memory: str = '2000M') -> List[str]:
     check_for_msgfplus()
     pepxml_results = []
     for mzml in mzml_files:
@@ -73,3 +73,21 @@ def tandem(parameter_file, fasta, *mzml_files) -> List[str]:
                      path_to_bind=bind_point)
         pepxml_results.append(t_pepxml)
     return pepxml_results
+
+
+def run_all_with_defaults(comet_parameters,
+                          msgfplus_parameters,
+                          tandem_parameters,
+                          fasta,
+                          *mzml_files) -> List[str]:
+    pepxml_files = comet(parameter_file=comet_parameters,
+                         fasta=fasta,
+                         *mzml_files)
+    pepxml_files += msgfplus(parameter_file=msgfplus_parameters,
+                             fasta=fasta,
+                             *mzml_files)
+    pepxml_files += tandem(parameter_file=tandem_parameters,
+                           fasta=fasta,
+                           *mzml_files)
+
+    return pepxml_files
