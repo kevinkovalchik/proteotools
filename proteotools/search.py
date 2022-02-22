@@ -10,6 +10,9 @@ def comet(parameter_file, fasta, mzml_files) -> List[str]:
     check_for_comet()
     pepxml_results = []
 
+    if isinstance(mzml_files, str):
+        mzml_files = [mzml_files]
+
     for mzml in mzml_files:
         name = Path(mzml).stem
         name = Path(mzml).parent / (name + '-comet')
@@ -27,9 +30,13 @@ def comet(parameter_file, fasta, mzml_files) -> List[str]:
 
 
 def msgfplus(parameter_file, fasta, mzml_files, decoy_prefix: str = 'rev_', convert_to_pepxml: bool = True,
-             memory: str = '2000M') -> List[str]:
+             memory: str = '6000M') -> List[str]:
     check_for_msgfplus()
     pepxml_results = []
+
+    if isinstance(mzml_files, str):
+        mzml_files = [mzml_files]
+
     for mzml in mzml_files:
         name = Path(mzml).stem
         mzid = Path(mzml).parent / (name + '-msgf_plus.mzid')
@@ -55,6 +62,10 @@ def msgfplus(parameter_file, fasta, mzml_files, decoy_prefix: str = 'rev_', conv
 def tandem(parameter_file, fasta, mzml_files) -> List[str]:
     check_for_tandem()
     output_dir = Path(mzml_files[0]).expanduser().parent
+
+    if isinstance(mzml_files, str):
+        mzml_files = [mzml_files]
+
     # we don't convert the tandem xml files to pepxml here. the output doesn't seem to be compatible with TPP tools
     command = f'runtandem -i {parameter_file} -db {fasta} --noconvert --overwrite -o {output_dir} --tandem.exe {TANDEM} -v 2 ' \
               f'{" ".join(mzml_files)}'.split()
@@ -63,7 +74,8 @@ def tandem(parameter_file, fasta, mzml_files) -> List[str]:
     if p.returncode != 0:
         raise SubprocessError('Something went wrong while running X! Tandem. Inspect the above output.')
     pepxml_results = []
-    # convert to pepXML
+
+    # convert to pepXML using Tandem2XML
     for mzml in mzml_files:
         txml = Path(str(mzml).replace('.mzML', '.t.xml'))
         t_pepxml = str(txml).replace('.t.xml', '-tandem.pepXML')
