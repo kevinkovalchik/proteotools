@@ -59,7 +59,11 @@ def msgfplus(parameter_file, fasta, mzml_files, decoy_prefix: str = 'rev_', conv
     return pepxml_results
 
 
-def tandem(parameter_file, fasta, ms_files, convert_to_mgf: bool = True) -> List[str]:
+def tandem(parameter_file,
+           fasta,
+           ms_files,
+           convert_to_mgf: bool = True,
+           overwrite_existing_mgf: bool = False) -> List[str]:
     check_for_tandem()
     output_dir = Path(ms_files[0]).expanduser().parent
 
@@ -70,7 +74,7 @@ def tandem(parameter_file, fasta, ms_files, convert_to_mgf: bool = True) -> List
 
     if convert_to_mgf and ms_file_ext not in ['.mfg', '.MGF']:
         for ms_file in ms_files:
-            if Path(ms_file).with_suffix('.mgf').exists():
+            if (not overwrite_existing_mgf) and Path(ms_file).with_suffix('.mgf').exists():
                 print(f'MGF version of {ms_file} found. Using: {Path(ms_file).with_suffix(".mgf")}')
                 continue
             print(f'Converting {ms_file} to MGF format')
