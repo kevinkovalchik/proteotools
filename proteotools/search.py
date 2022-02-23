@@ -59,16 +59,27 @@ def msgfplus(parameter_file, fasta, mzml_files, decoy_prefix: str = 'rev_', conv
     return pepxml_results
 
 
-def tandem(parameter_file, fasta, mzml_files) -> List[str]:
+def tandem(parameter_file, fasta, ms_files, convert_to_mgf: bool = True) -> List[str]:
     check_for_tandem()
-    output_dir = Path(mzml_files[0]).expanduser().parent
+    output_dir = Path(ms_files[0]).expanduser().parent
 
-    if isinstance(mzml_files, str):
-        mzml_files = [mzml_files]
+    if isinstance(ms_files, str):
+        ms_files = [ms_files]
+
+    ms_file_ext = Path(ms_files[0]).suffix
+
+    if convert_to_mgf and ms_file_ext not in ['.mfg', '.MGF']:
+        for ms_file in ms_files:
+            if Path(ms_file).with_suffix('.mgf').exists():
+                print(f'MGF version of {ms_file} found. Using: {Path(ms_file).with_suffix(".mgf")}')
+                continue
+            print(f'Converting {ms_file} to MGF format')
+            tpp.run_tool('msconvert', f'-o {Path(ms_file).parent} --mgf {ms_file}', Path(ms_file).parent)
+        ms_files = [str(Path(x).with_suffix('.mgf')) for x in ms_files]
 
     # we don't convert the tandem xml files to pepxml here. the output doesn't seem to be compatible with TPP tools
-    command = f'runtandem -i {parameter_file} -db {fasta} --noconvert --overwrite -o {output_dir} --tandem.exe {TANDEM} -v 2 ' \
-              f'{" ".join(mzml_files)}'.split()
+    command = f'runtandem -i {parameter_file} -db {fasta} --noconvert --overwrite -o {output_dir} --tandem.exe {TANDEM} -v 3 ' \
+              f'{" ".join(ms_files)}'.split()
     p = Popen(command)
     _ = p.communicate()
     if p.returncode != 0:
@@ -76,9 +87,9 @@ def tandem(parameter_file, fasta, mzml_files) -> List[str]:
     pepxml_results = []
 
     # convert to pepXML using Tandem2XML
-    for mzml in mzml_files:
-        txml = Path(str(mzml).replace('.mzML', '.t.xml'))
-        t_pepxml = str(txml).replace('.t.xml', '-tandem.pepXML')
+    for mzml in ms_files:
+        txml = Path(str(mzml).replace(ms_file_ext, '.t.xml'))  # get the name of the tandem XML file
+        t_pepxml = str(txml).replace('.t.xml', '-tandem.pepXML')  # this is the name for the pepXML file we will create
         bind_point = Path(mzml).parent
         tpp.run_tool('Tandem2XML',
                      f'{txml} {t_pepxml}',
@@ -100,6 +111,6 @@ def run_all_with_defaults(comet_parameters,
                              mzml_files=mzml_files)
     pepxml_files += tandem(parameter_file=tandem_parameters,
                            fasta=fasta,
-                           mzml_files=mzml_files)
+                           ms_files=mzml_files)
 
     return pepxml_files
