@@ -59,7 +59,7 @@ import proteotools.search as search
 from pathlib import Path
 
 fasta = '/path/to/my/favorite/fasta_file.fasta'
-mzml_files = list(Path('/path/to/a/directory/with/mzml_files').glob('*.mzML'))
+mzml_files = list(Path('/path/to/a/directory/with/ms_files').glob('*.mzML'))
 
 comet_params = '/path/to/an/appropriate/comet.params'
 search.comet(parameter_file=comet_params,
@@ -98,7 +98,7 @@ tpp.run_prophets(pepxml_files=pepxml_files,
                  iprophet_out_filename='interact-iproph.pepXML',  # the final file
                  threads=16,  # How many threads iProphet gets to use
                  iprophet_minprob=0,  # minimum output probability for iProphet
-                 mzml_directory='/path/to/a/directory/with/the/searched/mzml_files',  # where the original mzML files are located
+                 mzml_directory='/path/to/a/directory/with/the/searched/ms_files',  # where the original mzML files are located
                  skip_existing_interact_pepxmls=True,  # skips any files that starts with "interact-", because you are probably trying out different parameters and left the output files from a previous run hanging around. I'm not aware that recursive PSM validation is a helpful thing.
                  max_peptide_rank=1  # the max peptide rank to leave in there, if the search engine report, e.g. the top 5 hits
                  )
