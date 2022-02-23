@@ -91,10 +91,10 @@ def tandem(parameter_file,
     pepxml_results = []
 
     # convert to pepXML using Tandem2XML
-    for mzml in ms_files:
-        txml = Path(str(mzml).replace(ms_file_ext, '.t.xml'))  # get the name of the tandem XML file
+    for ms_file in ms_files:
+        txml = Path(ms_file).with_suffix('.t.xml')  # get the name of the tandem XML file
         t_pepxml = str(txml).replace('.t.xml', '-tandem.pepXML')  # this is the name for the pepXML file we will create
-        bind_point = Path(mzml).parent
+        bind_point = Path(ms_file).parent
         tpp.run_tool('Tandem2XML',
                      f'{txml} {t_pepxml}',
                      path_to_bind=bind_point)
