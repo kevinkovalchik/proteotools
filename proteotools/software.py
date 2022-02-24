@@ -112,7 +112,12 @@ def check_for_msgfplus():
 
 def get_tpp():
 
+    print('Pulling TPP image')
+
     check_for_singularity()
+
+    if not TOOL_DIR.exists():
+        TOOL_DIR.mkdir()
 
     if not (TOOL_DIR / 'tpp').exists():
         (TOOL_DIR / 'tpp').mkdir()
@@ -127,6 +132,28 @@ def get_tpp():
 
     if p.returncode != 0:
         raise OSError('There was a problem pulling the TPP Singularity image. Please see the above output.')
+
+
+def get_proteowizard():
+    print('Pulling ProteoWizard image')
+
+    check_for_singularity()
+
+    if not TOOL_DIR.exists():
+        TOOL_DIR.mkdir()
+    if not (TOOL_DIR / 'proteowizard').exists():
+        (TOOL_DIR / 'proteowizard').mkdir()
+
+    command = f'singularity build --sandbox proteowizard docker://chambm/pwiz-skyline-i-agree-to-the-vendor-licenses'.split()
+
+    cwd = os.getcwd()
+    os.chdir(TOOL_DIR / 'proteowizard')
+    p = Popen(command)
+    _ = p.communicate()
+    os.chdir(cwd)
+
+    if p.returncode != 0:
+        raise OSError('There was a problem pulling the ProteoWizard Singularity image. Please see the above output.')
 
 
 def download_all():
