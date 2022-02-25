@@ -17,15 +17,19 @@ def tool_help(tool: str):
 
 def run_tool(tool: str,
              command: Union[str, List[str]],
-             path_to_bind: Union[str, PathLike] = '~/'):
+             path_to_bind: Union[str, PathLike] = '~/',
+             disable_tmpfs: bool = False):
 
     check_for_singularity()
 
     if isinstance(command, list):
         command = ' '.join(command)
 
-    singularity_command = f'singularity exec --writable-tmpfs -B {path_to_bind} {PROTEOWIZARD} wine {tool} ' \
-                          f'{command}'.split()
+    if not disable_tmpfs:
+        singularity_command = f'singularity exec --writable-tmpfs -B {path_to_bind} {PROTEOWIZARD} wine {tool} ' \
+                              f'{command}'.split()
+    else:
+        singularity_command = f'singularity exec -B {path_to_bind} {PROTEOWIZARD} wine {tool} {command}'.split()
 
     p = Popen(singularity_command)
     _ = p.communicate()
@@ -37,6 +41,7 @@ def run_tool(tool: str,
 def run_idconvert(input_file,
                   output_directory,
                   output_extension,
-                  format: Literal['pepXML', 'mzIdentML', 'text'] = 'pepXML'):
+                  format: Literal['pepXML', 'mzIdentML', 'text'] = 'pepXML',
+                  disable_tmpfs: bool = False):
     command = f'{input_file} -o {output_directory} -e {output_extension} --{format}'.split()
-    run_tool('idconvert', command, path_to_bind=Path(input_file).parent)
+    run_tool('idconvert', command, path_to_bind=Path(input_file).parent, disable_tmpfs=disable_tmpfs)
