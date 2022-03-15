@@ -38,18 +38,26 @@ def run_interactparser(pepxml_files: List[Union[str, PathLike]],
                        ) -> List[Path]:
 
     if mzml_directory is None:
-        mzml_directory = Path(pepxml_files[0]).parent
-    if str(mzml_directory) != str(Path(pepxml_files[0]).parent):
+        if all([Path(x).with_suffix('.mzML').exists() for x in pepxml_files]):
+            mzml_directory = Path(pepxml_files[0]).parent
+
+    if mzml_directory:
         bind_point = f'{mzml_directory},{Path(pepxml_files[0]).parent}'
     else:
-        bind_point = mzml_directory
+        bind_point = f'{Path(pepxml_files[0]).parent}'
+
+    if str(Path(fasta).parent) not in bind_point:
+        bind_point += f',{Path(fasta).parent}'
+
     interact_output = []
     for pepxml in pepxml_files:
         print(f'InteractParser: {pepxml}')
         pepxml = Path(pepxml)
         output = pepxml.parent / f'interact-{pepxml.name}'
         run_tool('InteractParser',
-                 f'{output} {pepxml} -a{mzml_directory} -D{fasta} -E{enzyme} -C -S -R{max_peptide_rank}',
+                 f'{output} {pepxml} '
+                 f'{("-a" + str(mzml_directory) + " ") if mzml_directory else ""} '
+                 f'-D{fasta} -E{enzyme} -C -S -R{max_peptide_rank}',
                  path_to_bind=bind_point)
         interact_output.append(output)
 
